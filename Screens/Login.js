@@ -1,40 +1,29 @@
-import React, { useState, useEffect } from "react";
-import firestore from '@react-native-firebase/firestore';
+import React, { useState, useContext } from "react";
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from "../Navigation/AuthProvider";
 import { View, Text, StyleSheet, Button, TextInput, Alert, StatusBar, TouchableOpacity } from 'react-native';
 
 const Login = () => {
     const [email_mob, setemail_mob] = useState("");
     const [pass, setpass] = useState("");
-    const [user, setuser] = useState("");
-    const [name, setname] = useState("");
 
     const navigation = useNavigation();
+    const { login } = useContext(AuthContext);
 
-    /* function User({ userId }) {
-         useEffect(() => {
-             const subscriber = firestore()
-                 .collection('Users')
-                 .doc(userId)
-                 .onSnapshot(documentSnapshot => {
-                     console.log('User data: ', documentSnapshot.data());
-                 });
- 
-             Stop listening for updates when no longer required
-             return () => subscriber();
-         }, [userId]);
-     }*/
-    // Get Data From DataBase
-    const User = async () => {
+    const IsEmpty = () => {
+        if (email_mob == "") {
+            alert("Email Field is Empty");
+        } else {
+            if (pass == "") {
+                alert("Password Field is Empty")
+            } else {
+                login();
+                setemail_mob("");
+                setpass("");
 
-        const res = await firestore()
-            .collection('Users')
-            .doc("dhruv")
-            .onSnapshot(documentSnapshot => {
-                console.log('User data: ', documentSnapshot.data());
-            });
-
-    };
+            }
+        }
+    }
 
     return (
         <View style={styles.screen}>
@@ -45,17 +34,7 @@ const Login = () => {
                 <TextInput style={styles.input} placeholder="Password" onChangeText={setpass} secureTextEntry={true} />
                 <View style={styles.btn1}>
                     <TouchableOpacity style={styles.btn} onPress={() => {
-                        /*firestore()
-                            .collection('Users')
-                            .add({
-                                name: 'Dharmendra Kumar',
-                                age: 24,
-                            })
-                            .then(() => {
-                                alert("User Added!")
-                            })*/
-                        // navigation.replace("Profile")
-                        SetData();
+                        login(email_mob, pass)
                     }}>
                         <Text style={styles.txt}>Login</Text>
                     </TouchableOpacity>

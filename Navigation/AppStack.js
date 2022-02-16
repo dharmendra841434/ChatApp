@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Profile from '../Screens/Profile';
 import ChatingScreen from '../Screens/ChatingScreen';
+import AllUsers from '../Screens/AllUsers';
 
 const Mystack = createNativeStackNavigator();
 
@@ -13,6 +14,9 @@ const AppStack = () => {
             <Mystack.Navigator>
                 <Mystack.Screen name='Profile' component={Profile} options={{ headerShown: false }} />
                 <Mystack.Screen name='Chating' component={ChatingScreen} options={{
+                    headerShown: false
+                }} />
+                <Mystack.Screen name='AllUsers' component={AllUsers} options={{
                     headerShown: false
                 }} />
             </Mystack.Navigator>

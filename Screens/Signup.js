@@ -21,10 +21,13 @@ const Signup = () => {
             .set({
                 Name: name,
                 Email: email_mob,
-                Password: pass
+                Password: pass,
+                Image: "",
+                Friends: [],
+                Messages: []
             })
             .then(() => {
-
+                register(email_mob, pass)
                 setname("");
                 setemail_mob("");
                 setpass("");
