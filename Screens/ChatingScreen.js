@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
+
 const Data = [
     {
         id: 1,
@@ -20,8 +21,9 @@ const Data = [
     },
 ]
 
-const ChatingScreen = () => {
+const ChatingScreen = (props) => {
 
+    const data = props.route.params.AllFriends;
     const navigation = useNavigation();
     return (
         <View style={styles.screen}>
@@ -31,14 +33,18 @@ const ChatingScreen = () => {
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={Data}
+                data={data}
                 renderItem={({ item }) => (
                     <View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                            <TouchableOpacity style={[styles.Dp, { borderWidth: 0, width: '22%', marginStart: 10 }]}>
+                            <TouchableOpacity onPress={() => {
+                                navigation.navigate("ChatBox", {
+                                    FriendData: item
+                                })
+                            }} style={[styles.Dp, { borderWidth: 0, width: '22%', marginStart: 10 }]}>
                                 <Image style={{ height: 80, width: 80, }} source={require("../Images/dp.png")} />
                             </TouchableOpacity>
-                            <Text style={{ color: '#c9b1c5' }}>{item.name}</Text>
+                            <Text style={{ color: '#c9b1c5', marginStart: 10 }}>{item.Name}</Text>
                         </View>
                     </View>
                 )}

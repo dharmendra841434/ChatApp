@@ -5,25 +5,24 @@ import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../Navigation/AuthProvider';
 import auth from "@react-native-firebase/auth";
 import FriendList from './FriendList';
+import AwesomeLoading from 'react-native-awesome-loading';
+
+
 const Profile = () => {
 
     const [UserEmail, setUserEmail] = useState("");
     const [Friends, setFriends] = useState();
+    const [loading, setloading] = useState(true);
     const [name, setname] = useState("");
     const [dp, setdp] = useState("");
     const [defaultDp, setdefaultDp] = useState("")
 
-    useEffect(() => {
-        const userData = auth().currentUser;
-        setUserEmail(userData.email);
-        // console.log(UserEmail);
-        GetUser();
-
-    }, [Friends]);
     const GetUser = async () => {
         const email = await auth().currentUser
         var userEmail = email.email;
-        const savedUser = await firestore().collection('Users').doc(userEmail).get();
+        const savedUser = await firestore().collection('Users').doc(userEmail).get().then(
+            setloading(false)
+        )
         var F = savedUser._data.Friends;
         setFriends(F)
         //console.log(Friends);
@@ -37,8 +36,15 @@ const Profile = () => {
             }
         }
     };
-    // console.log(Friends);
+    //console.log(name);
+    //GetUser();
+    useEffect(() => {
+        const userData = auth().currentUser;
+        setUserEmail(userData.email);
+        // console.log(UserEmail);
+        GetUser();
 
+    }, [Friends]);
 
     const navigation = useNavigation();
     const { logout } = useContext(AuthContext);
@@ -49,7 +55,11 @@ const Profile = () => {
                     <Text style={{ color: 'black' }}>Find Friends</Text>
                     <Image style={{ height: 25, width: 25, marginStart: 20, marginEnd: 20, marginTop: 8 }} source={require("../Images/find.png")} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { navigation.navigate("Chating") }}>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Chating", {
+                        AllFriends: Friends
+                    })
+                }}>
                     <Image style={{ height: 40, width: 40, marginStart: 100, tintColor: '#c9b1c5', marginTop: 8 }} source={require("../Images/chatbox.png")} />
                 </TouchableOpacity>
             </View>

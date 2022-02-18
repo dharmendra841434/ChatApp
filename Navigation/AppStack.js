@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Profile from '../Screens/Profile';
 import ChatingScreen from '../Screens/ChatingScreen';
 import AllUsers from '../Screens/AllUsers';
+import ChatBox from '../Screens/ChatBox';
 
 const Mystack = createNativeStackNavigator();
 
@@ -17,6 +18,9 @@ const AppStack = () => {
                     headerShown: false
                 }} />
                 <Mystack.Screen name='AllUsers' component={AllUsers} options={{
+                    headerShown: false
+                }} />
+                <Mystack.Screen name='ChatBox' component={ChatBox} options={{
                     headerShown: false
                 }} />
             </Mystack.Navigator>

@@ -1,13 +1,15 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native'
 import firestore from '@react-native-firebase/firestore';
+import firebase from '@react-native-firebase/app';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import auth from "@react-native-firebase/auth";
 
+
 const AllUsers = () => {
 
     const [AllData, setAllData] = useState();
-    const [nclm, setnclm] = useState(2);
+    const [loading, setloading] = useState(true);
     const [email, setemail] = useState("");
     const [FriendsData, setFriendsData] = useState();
 
@@ -16,33 +18,38 @@ const AllUsers = () => {
         const email = await auth().currentUser
         var userEmail = email.email;
         setemail(userEmail);
-        const savedUser = await firestore().collection('Users').get();
+        const savedUser = await firestore().collection('Users').get().then(
+            setloading(false)
+
+        )
         setAllData(savedUser._docs)
-        // console.log(AllData);
+        // console.log(savedUser._docs._data);
     };
+
     useEffect(() => {
         GetAll();
-        // console.log(FriendsData);
+        console.log(FriendsData);
     }, [])
 
-    GetAll();
-
     const AddFriends = () => {
+        // console.log(FriendsData.Email);
+
         firestore()
             .collection('Users')
             .doc(email)
             .update({
-                Friends: [
-                    {
-                        id: Math.random(),
-                        email: FriendsData.Email,
-                        Name: FriendsData.Name
-                    }
-                ]
+                Friends: firestore.FieldValue.arrayUnion({
+                    id: Math.random(),
+                    email: FriendsData.Email,
+                    Name: FriendsData.Name
+                })
             }).then(
                 alert("add sucessfully")
             )
+
     };
+
+    // console.log(AllData);
     return (
         <View style={styles.screen}>
             <View style={styles.header}>
@@ -59,11 +66,11 @@ const AllUsers = () => {
                         <Text style={styles.Name}>{item._data.Name}</Text>
                         {
                             item._data.Email == email ? <View><Text>This is You</Text></View> :
+                                /* FriendsData.Name == item._data.Name ? <View><Text style={{ fontSize: 12, marginBottom: 10 }}>Already in Your FriendList</Text></View> :*/
                                 <TouchableOpacity style={styles.addbtn} onPress={() => {
                                     setFriendsData(item._data);
                                     AddFriends();
-                                    // console.log(FriendsData);
-
+                                    // console.log();
                                 }}>
                                     <Text style={{ color: 'yellow' }}>Add Friend</Text>
                                 </TouchableOpacity>
@@ -71,6 +78,7 @@ const AllUsers = () => {
                     </View>
                 )}
             />
+
         </View>
     )
 };
