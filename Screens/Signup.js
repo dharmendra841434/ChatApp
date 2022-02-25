@@ -24,7 +24,6 @@ const Signup = () => {
                 Password: pass,
                 Image: "",
                 Friends: [],
-                Messages: []
             })
             .then(() => {
                 register(email_mob, pass)
@@ -32,7 +31,6 @@ const Signup = () => {
                 setemail_mob("");
                 setpass("");
                 alert("Signup Sucessfully..!");
-
             });
     }
 

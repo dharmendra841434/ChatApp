@@ -11,7 +11,10 @@ const AllUsers = () => {
     const [AllData, setAllData] = useState();
     const [loading, setloading] = useState(true);
     const [email, setemail] = useState("");
-    const [FriendsData, setFriendsData] = useState();
+    var date = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    //alert(date + '-' + month + '-' + year);
 
     const navigation = useNavigation();
     const GetAll = async () => {
@@ -28,24 +31,36 @@ const AllUsers = () => {
 
     useEffect(() => {
         GetAll();
-        console.log(FriendsData);
+        //  console.log(FriendsData);
     }, [])
 
-    const AddFriends = () => {
+    const AddFriends = (Femail, Fname) => {
         // console.log(FriendsData.Email);
-
         firestore()
             .collection('Users')
             .doc(email)
             .update({
                 Friends: firestore.FieldValue.arrayUnion({
                     id: Math.random(),
-                    email: FriendsData.Email,
-                    Name: FriendsData.Name
+                    Email: Femail,
+                    Name: Fname
                 })
-            }).then(
+            }).then(() => {
+                firestore()
+                    .collection("MESSAGES")
+                    .doc(email)
+                    .collection("Friends").doc(Femail).set({
+                        Message: [
+                            {
+                                msg: '',
+                                createdBy: date + '-' + month + '-' + year,
+                                sendBy: '',
+
+                            }
+                        ]
+                    });
                 alert("add sucessfully")
-            )
+            })
 
     };
 
@@ -68,9 +83,8 @@ const AllUsers = () => {
                             item._data.Email == email ? <View><Text>This is You</Text></View> :
                                 /* FriendsData.Name == item._data.Name ? <View><Text style={{ fontSize: 12, marginBottom: 10 }}>Already in Your FriendList</Text></View> :*/
                                 <TouchableOpacity style={styles.addbtn} onPress={() => {
-                                    setFriendsData(item._data);
-                                    AddFriends();
-                                    // console.log();
+                                    AddFriends(item._data.Email, item._data.Name);
+
                                 }}>
                                     <Text style={{ color: 'yellow' }}>Add Friend</Text>
                                 </TouchableOpacity>
