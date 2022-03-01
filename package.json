@@ -20,6 +20,7 @@
     "react": "17.0.2",
     "react-native": "0.67.1",
     "react-native-awesome-loading": "^1.0.15",
+    "react-native-dialog": "^9.2.1",
     "react-native-fast-image": "^8.5.11",
     "react-native-pager-view": "^5.4.9",
     "react-native-safe-area-context": "^3.3.2",

@@ -5,80 +5,16 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  FlatList,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 
-const ChatBox = props => {
-  const navigation = useNavigation();
-  const data = props.route.params.FriendData;
+const GroupChatBox = props => {
+  const Gdata = props.route.params.GroupData;
+
   const [Message, setMessage] = useState('');
-  var date = new Date().getDate();
-  const [AllMessages, setAllMessages] = useState([
-    {
-      send: [],
-      recive: [],
-    },
-  ]);
-  var month = new Date().getMonth() + 1;
-  var year = new Date().getFullYear();
 
-  const RecivedMsg = {
-    SendMsg: [],
-    ReciveMsg: [],
-  };
-
-  const SendMessage = async () => {
-    const email = auth().currentUser;
-    //  console.log(email.email, data.Email, Message);
-    firestore()
-      .collection('MESSAGES')
-      .doc(email.email)
-      .collection('Friends')
-      .doc(data.Email)
-      .update({
-        Message: firestore.FieldValue.arrayUnion({
-          msg: Message,
-          createdBy: date + '-' + month + '-' + year,
-          sendBy: email.email,
-        }),
-      })
-      .then(() => {
-        setMessage(''), console.log('sent');
-      });
-  };
-
-  const ReciveMessage = async () => {
-    const email = await auth().currentUser;
-    var userEmail = email.email;
-    // setemail(userEmail);
-    const Allmsg = await firestore()
-      .collection('MESSAGES')
-      .doc(email.email)
-      .collection('Friends')
-      .doc(data.Email)
-      .get();
-    const Allmsg2 = await firestore()
-      .collection('MESSAGES')
-      .doc(data.Email)
-      .collection('Friends')
-      .doc(email.email)
-      .get();
-
-    setAllMessages({
-      send: [Allmsg._data],
-      recive: [Allmsg2._data],
-    });
-
-    //console.log(AllMessages);
-  };
-  useEffect(() => {
-    ReciveMessage();
-  }, [AllMessages]);
-
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -106,8 +42,9 @@ const ChatBox = props => {
             fontSize: 20,
             fontWeight: 'bold',
           }}>
-          {data.Name}
+          {Gdata.Gname}
         </Text>
+        <Text>dhrub</Text>
       </View>
       <View
         style={{
@@ -136,14 +73,14 @@ const ChatBox = props => {
         </TouchableOpacity>
       </View>
       <View>
-        <FlatList
+        {/* <FlatList
           data={AllMessages.send}
           renderItem={({item}) => (
             <View>
               <Text style={{color: 'white'}}>{item.msg}</Text>
             </View>
           )}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -163,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatBox;
+export default GroupChatBox;
