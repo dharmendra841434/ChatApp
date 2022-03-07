@@ -16,13 +16,9 @@ const ChatBox = props => {
   const navigation = useNavigation();
   const data = props.route.params.FriendData;
   const [Message, setMessage] = useState('');
+  const [Useremail, setUseremail] = useState('');
   var date = new Date().getDate();
-  const [AllMessages, setAllMessages] = useState([
-    {
-      send: [],
-      recive: [],
-    },
-  ]);
+  const [Recive, setRecive] = useState();
   var month = new Date().getMonth() + 1;
   var year = new Date().getFullYear();
 
@@ -42,11 +38,23 @@ const ChatBox = props => {
       .update({
         Message: firestore.FieldValue.arrayUnion({
           msg: Message,
-          createdBy: date + '-' + month + '-' + year,
+          createdBAt: date + '-' + month + '-' + year,
           sendBy: email.email,
         }),
       })
       .then(() => {
+        firestore()
+          .collection('MESSAGES')
+          .doc(data.Email)
+          .collection('Friends')
+          .doc(email.email)
+          .update({
+            Message: firestore.FieldValue.arrayUnion({
+              msg: Message,
+              createdBAt: date + '-' + month + '-' + year,
+              sendBy: email.email,
+            }),
+          });
         setMessage(''), console.log('sent');
       });
   };
@@ -54,31 +62,21 @@ const ChatBox = props => {
   const ReciveMessage = async () => {
     const email = await auth().currentUser;
     var userEmail = email.email;
-    // setemail(userEmail);
+    setUseremail(userEmail);
     const Allmsg = await firestore()
       .collection('MESSAGES')
       .doc(email.email)
       .collection('Friends')
       .doc(data.Email)
       .get();
-    const Allmsg2 = await firestore()
-      .collection('MESSAGES')
-      .doc(data.Email)
-      .collection('Friends')
-      .doc(email.email)
-      .get();
+    setRecive(Allmsg._data.Message);
 
-    setAllMessages({
-      send: [Allmsg._data],
-      recive: [Allmsg2._data],
-    });
-
-    //console.log(AllMessages);
+    // console.log(Send, Recive);
   };
   useEffect(() => {
     ReciveMessage();
-  }, [AllMessages]);
-
+  }, [Recive]);
+  //console.log(Useremail);
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -137,10 +135,23 @@ const ChatBox = props => {
       </View>
       <View>
         <FlatList
-          data={AllMessages.send}
+          data={Recive}
           renderItem={({item}) => (
-            <View>
-              <Text style={{color: 'white'}}>{item.msg}</Text>
+            <View
+              style={{width: '100%', justifyContent: 'center', height: 'auto'}}>
+              <Text
+                style={{
+                  color: item.sendBy == Useremail ? 'red' : 'yellow',
+                  width: '30%',
+                  justifyContent: 'center',
+                  borderRadius: 5,
+                  padding: 10,
+                  marginTop: '2%',
+                  backgroundColor: item.sendBy == Useremail ? 'gray' : 'gray',
+                  marginStart: item.sendBy == Useremail ? '65%' : '2%',
+                }}>
+                {item.msg == '' ? null : item.msg}
+              </Text>
             </View>
           )}
         />

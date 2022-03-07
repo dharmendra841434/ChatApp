@@ -128,7 +128,7 @@ const Profile = () => {
       <View style={{alignItems: 'center', marginTop: 20}}>
         <View style={styles.Dp}>
           <Image
-            style={{height: 140, width: 150}}
+            style={{height: 80, width: 90}}
             source={require('../Images/dp.png')}
           />
         </View>
@@ -198,14 +198,19 @@ const Profile = () => {
           <Dialog.Button
             label="Create"
             onPress={() => {
+              var id = Math.random() * (1000 - 1) + 1;
               handleDelete;
               firestore()
                 .collection('Groups')
-                .doc(UserEmail)
-                .collection(GroupName)
-                .doc('Messages')
+                .doc(id.toString())
                 .set({
-                  Messages: [],
+                  Messages: [
+                    {
+                      text: '',
+                      createdAt: '',
+                      sendBy: '',
+                    },
+                  ],
                 })
                 .then(() => {
                   firestore()
@@ -213,7 +218,7 @@ const Profile = () => {
                     .doc(UserEmail)
                     .update({
                       Groups: firestore.FieldValue.arrayUnion({
-                        id: Math.random(),
+                        id: id.toString(),
                         Gname: GroupName,
                       }),
                     });
@@ -229,7 +234,7 @@ const Profile = () => {
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 40,
+            marginTop: 20,
           }}>
           <Text style={{fontSize: 30, color: 'green', fontWeight: 'bold'}}>
             Your Friends
@@ -274,12 +279,12 @@ const styles = StyleSheet.create({
   Dp: {
     borderColor: '#c9b1c5',
     borderWidth: 6,
-    width: 160,
-    borderRadius: 500,
+    width: 100,
+    borderRadius: 90,
     overflow: 'hidden',
   },
   detailContainer: {
-    marginTop: 40,
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
